@@ -123,7 +123,7 @@ Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and d
 
 | Item | Est. Price (USD) | Source | Why |
 |---|---|---|---|
-|Tang Mega 138K + Dock | $130–175 | [SiPEED Store Aliexpress](https://www.aliexpress.com/item/1005006080116482.html) | Main FPGA used for synchronization and future digital processing |
+|Tang Nano 20k | $35–40 | [REES52](https://rees52.com/products/sipeed-tang-nano-20k-fpga-board-high-performance-dev-board-for-robotics-electronics) | Main FPGA for trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic |
 |Tang Primer 20K Carrier PCB | ~$20 | Self-designed | Carrier for the Primer module (I already own the core board) |
 |Passive Probe PCB | ~$15 | Self-designed | Shielded PCB H-field probe|
 |Active Probe PCB | ~$25 | Self-designed | Integrated low-noise amplifier |
@@ -132,14 +132,14 @@ Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and d
 |Components for Active Probe PCB | $20–40 | [Mini-Circuits](https://www.minicircuits.com/) | Prototype analog front-end |
 |SMA Connectors, RG178, Adapters, Attenuators |	$30–60 | [Pasternack](https://www.pasternack.com/), [Amphenol](https://www.amphenolrf.com/en-us/), [Mini-Circuits](https://www.minicircuits.com/) | RF interconnects |
 |Magnet Wire, Ferrites | $10–20 | [Remington Industries](https://www.remingtonindustries.com), [Fair-rite](https://fair-rite.com)  | Probe construction |
-|Bench Linear PSU | $40–150 | Local market | Low-noise power |
-|Manual XY Positioning Stage | $40–150 | [Thorlabs](https://www.thorlabs.com/manual-stages) (will probably get something cheaper for 35-50$) | Precise probe positioning |
+|Manual XY Positioning Stage | $30–40 | [Example at amazon](https://www.amazon.in/Mechanical-Moveable-Microscope-Caliper-Precision/dp/B07VPQT851) | Precise probe positioning |
 |PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards|
 |Miscellaneous passives, shielding, perfboard | $20–40 | Digikey/Mouser/As per need | Prototyping (I am not building any PCB until I have a known good circuit) |
 |FTDI Programmer or SiPEED programmer | ~25-50$ | [Mouser](https://www.mouser.in/en/ProductDetail/FTDI/FT2232H-MINI-MODULE?qs=pB3G9VbQXIf%252BpWyngo5ZjA%3D%3D&mgh=1) or a [SiPEED RV Debugger Plus](https://www.aliexpress.com/item/1005011815481146.html) | To program the FPGAs |
 
-Grand total: approx ~430$ (can be rounded off to 400, if I skip the thorlabs stuff and get a cheap used bench power supply)
+**Grand total**: anywhere from 325-450$ (can be rounded off to **$400 approx**)
 The oscilloscope, precision positioning stage, and laboratory power supply have been removed from the grant request. The initial revision of Tempest is designed to be developed using low-cost hardware and custom-designed PCBs, with higher-end laboratory equipment treated as optional future upgrades rather than project requirements.
+**BOM Revision 2**: The Tang Mega 138K, Thorlabs positioning equipment, and benchtop power supply have been removed due to cost. They have been replaced with lower-cost alternatives where necessary. A second, lower-cost FPGA is still required for <u>high-speed deterministic logic, trigger generation, timing/synchronization, buffering, and real-time control,</u> which cannot be reliably handled by the host computer or RTL-SDR alone.
 
 # Repository Layout
 - rtl: Shrike-Lite accelerator, Future hardware targets
