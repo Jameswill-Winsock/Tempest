@@ -20,16 +20,16 @@
 (* top *) module ntt_top (
     (* iopad_external_pin, clkbuf_inhibit *) input  clk,
     (* iopad_external_pin *)                 output clk_en,
-    (* iopad_external_pin *)                 input  rst_n,
 
-    // spi (rp2040 is controller)
+    // ---- SPI (RP2040 is controller) ----
     (* iopad_external_pin *) input  spi_ss_n,
     (* iopad_external_pin *) input  spi_sck,
     (* iopad_external_pin *) input  spi_mosi,
+    (* iopad_external_pin *) input  rst_n,
     (* iopad_external_pin *) output spi_miso,
     (* iopad_external_pin *) output spi_miso_en,
 
-    // BRAM0 : coeff/A low byte ----
+    // ---- BRAM0 : coeff/A low byte ----
     (* iopad_external_pin *) output [1:0] BRAM0_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM0_DATA_IN,
     (* iopad_external_pin *) output       BRAM0_WEN,
@@ -39,7 +39,7 @@
     (* iopad_external_pin *) output       BRAM0_REN,
     (* iopad_external_pin *) output       BRAM0_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM0_READ_ADDR,
-    // BRAM1 : coeff/A high byte ----
+    // ---- BRAM1 : coeff/A high byte ----
     (* iopad_external_pin *) output [1:0] BRAM1_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM1_DATA_IN,
     (* iopad_external_pin *) output       BRAM1_WEN,
@@ -49,7 +49,7 @@
     (* iopad_external_pin *) output       BRAM1_REN,
     (* iopad_external_pin *) output       BRAM1_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM1_READ_ADDR,
-    // BRAM2 : twiddle low byte ----
+    // ---- BRAM2 : twiddle low byte ----
     (* iopad_external_pin *) output [1:0] BRAM2_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM2_DATA_IN,
     (* iopad_external_pin *) output       BRAM2_WEN,
@@ -59,7 +59,7 @@
     (* iopad_external_pin *) output       BRAM2_REN,
     (* iopad_external_pin *) output       BRAM2_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM2_READ_ADDR,
-    // BRAM3 : twiddle high byte ----
+    // ---- BRAM3 : twiddle high byte ----
     (* iopad_external_pin *) output [1:0] BRAM3_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM3_DATA_IN,
     (* iopad_external_pin *) output       BRAM3_WEN,
@@ -69,7 +69,7 @@
     (* iopad_external_pin *) output       BRAM3_REN,
     (* iopad_external_pin *) output       BRAM3_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM3_READ_ADDR,
-    // BRAM4 : operand B low byte ----
+    // ---- BRAM4 : operand B low byte ----
     (* iopad_external_pin *) output [1:0] BRAM4_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM4_DATA_IN,
     (* iopad_external_pin *) output       BRAM4_WEN,
@@ -79,7 +79,7 @@
     (* iopad_external_pin *) output       BRAM4_REN,
     (* iopad_external_pin *) output       BRAM4_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM4_READ_ADDR,
-    // BRAM5 : operand B high byte ----
+    // ---- BRAM5 : operand B high byte ----
     (* iopad_external_pin *) output [1:0] BRAM5_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM5_DATA_IN,
     (* iopad_external_pin *) output       BRAM5_WEN,
@@ -91,6 +91,7 @@
     (* iopad_external_pin *) output [8:0] BRAM5_READ_ADDR
 );
 
+
     assign clk_en = 1'b1;
     wire rst = ~rst_n;
 
@@ -101,16 +102,18 @@
     assign BRAM4_RATIO = 2'b00;
     assign BRAM5_RATIO = 2'b00;
 
-    // combined 16 bit read data
+    // combined 16-bit read data
     wire [15:0] a_rdata  = {BRAM1_DATA_OUT, BRAM0_DATA_OUT};   // coeff / operand A
     wire [15:0] tw_rdata = {BRAM3_DATA_OUT, BRAM2_DATA_OUT};   // twiddle
     wire [15:0] b_rdata  = {BRAM5_DATA_OUT, BRAM4_DATA_OUT};   // operand B
 
-    //  spi target (canonical module, mode 0, msb, 8-bit)
-
+    // ------------------------------------------------------------------------
+    //  SPI target (canonical Shrike module, mode 0, MSB, 8-bit)
+    // ------------------------------------------------------------------------
     wire [7:0] rx_data;
     wire       rx_valid;
     reg  [7:0] tx_byte;
+    wire       tx_hold;
 
     spi_target #(.CPOL(0), .CPHA(0), .WIDTH(8), .LSB(0)) u_spi (
         .i_clk          (clk),
@@ -133,9 +136,10 @@
         if (!rst_n) rx_valid_d <= 1'b0;
         else        rx_valid_d <= rx_valid;
 
-    //  unified engine (aka shared core): one fq_seq (fwd/inv/scale/basemul) + one fq_core.
-    //  replaces ntt_master + ntt_butterfly + basemul_ctrl + mod_mult + mont_redc.
-
+    // ------------------------------------------------------------------------
+    //  UNIFIED engine: one fq_seq (fwd/inv/scale/basemul) + one fq_core.
+    //  Replaces ntt_master + ntt_butterfly + basemul_ctrl + mod_mult + mont_redc.
+    // ------------------------------------------------------------------------
     reg        eng_start; reg [1:0] eng_op;
     wire       eng_done;
     wire [7:0] e_araddr, e_awaddr, e_waddr, e_braddr;
@@ -155,23 +159,29 @@
         .clk(clk), .rst(rst), .go(e_go), .a(e_fa), .b(e_fb), .done(e_dn), .res(e_fr)
     );
 
-    wire eng_run = run | bmrun;   // engine owns the brams while active
+    wire eng_run = run | bmrun;   // engine owns the BRAMs while active
 
-    //  instruction decoder
+    // ------------------------------------------------------------------------
+    //  Command decoder
+    // ------------------------------------------------------------------------
     localparam H_IDLE = 2'd0,
                H_WRA  = 2'd1,   // load operand A
                H_WRB  = 2'd2,   // load operand B
                H_WRZ  = 2'd3;   // load zetas
-    // readback uses a dedicated flag (only 2 bits for hmode)
+    // read-back uses a dedicated flag (only 2 bits for hmode)
     reg  [1:0] hmode;
-    reg        rdc;             // readback A active
+    reg        rdc;             // read-back A active
     reg  [9:0] bptr;
-    reg        run;             // ntt active
+    reg        run;             // NTT active
     reg        bmrun;           // basemul active
     reg        dlatch;          // last op done
 
     wire [7:0] word_addr = bptr[9:1];
     wire       hi        = bptr[0];
+    // read-back prefetch: address the word one step ahead so registered BRAM
+    // data is valid when the vendor SPI target latches tx_byte.
+    wire [9:0] rd_ptr    = rdc ? (bptr + 10'd2) : bptr;  // +2 prefetch: host discards first 2 read words
+    wire [7:0] rd_waddr  = rd_ptr[9:1];
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -196,7 +206,7 @@
                         8'h20: begin hmode <= H_WRZ; bptr <= 10'd0; end
                                                                         8'h32: begin eng_start <= 1'b1; eng_op <= 2'd2; bmrun <= 1'b1; dlatch <= 1'b0; end
                         8'h50: begin rdc <= 1'b1; bptr <= 10'd0; end
-                        default: ; // 0x40 status: tx_byte already reflects dlatch
+                        default: ; // 0x40 STATUS: tx_byte already reflects dlatch
                     endcase
                 end else if (rdc) begin
                     if (bptr == 10'd511) rdc <= 1'b0;
@@ -211,35 +221,40 @@
         end
     end
 
-    // MISO byte: coeff during read-back, else status
+    // MISO byte: combinational. The vendor SPI target latches i_tx_data into its
+    // shift register at o_tx_data_hold (start of each outgoing byte), so tx_byte
+    // just needs to be valid then. rd_byte follows the current read pointer.
     wire [7:0] rd_byte = hi ? BRAM1_DATA_OUT : BRAM0_DATA_OUT;
     always @(*) tx_byte = rdc ? rd_byte : {7'b0, dlatch};
 
-    //  bram arbitration :  run -> butterfly ,  bmrun -> basemul ,  else -> host
+    // ------------------------------------------------------------------------
+    //  BRAM arbitration :  run -> butterfly ,  bmrun -> basemul ,  else -> host
+    // ------------------------------------------------------------------------
     wire host_wr_a = (hmode == H_WRA) & rx_pulse;
     wire host_wr_b = (hmode == H_WRB) & rx_pulse;
     wire host_wr_z = (hmode == H_WRZ) & rx_pulse;
 
-    // coeff / A (BRAM0/1)
+    // ---- coeff / A (BRAM0/1) ----
     wire        a_ren   = eng_run ? e_aren : rdc;
-    wire [7:0]  a_raddr = eng_run ? e_araddr : word_addr;
+    wire [7:0]  a_raddr = eng_run ? e_araddr : (rdc ? rd_waddr : word_addr);
     wire        a0_wen  = eng_run ? e_awen : (host_wr_a & ~hi);
     wire        a1_wen  = eng_run ? e_awen : (host_wr_a &  hi);
     wire [7:0]  a_waddr = eng_run ? e_awaddr : word_addr;
     wire [7:0]  a0_din  = eng_run ? e_awdata[7:0]  : rx_data;
     wire [7:0]  a1_din  = eng_run ? e_awdata[15:8] : rx_data;
 
-    // twiddle (BRAM2/3)
+    // ---- twiddle (BRAM2/3) ----
     wire        t_ren   = eng_run ? e_wren : 1'b0;
     wire [7:0]  t_raddr = eng_run ? e_waddr : 8'd0;
 
-    // operand B (BRAM4/5)
+    // ---- operand B (BRAM4/5) ----
     wire        b_ren   = eng_run ? e_bren   : 1'b0;
     wire [7:0]  b_raddr = eng_run ? e_braddr : 8'd0;
 
-    //  bram port wiring (enables inverted to active-low at the pads)
-
-    // BRAM0 : A low
+    // ========================================================================
+    //  BRAM port wiring (enables inverted to active-low at the pads)
+    // ========================================================================
+    // ---- BRAM0 : A low ----
     assign BRAM0_READ_ADDR  = {1'b0, a_raddr};
     assign BRAM0_REN        = ~a_ren;
     assign BRAM0_RCLKEN     = ~a_ren;
@@ -247,7 +262,7 @@
     assign BRAM0_DATA_IN    = a0_din;
     assign BRAM0_WEN        = ~a0_wen;
     assign BRAM0_WCLKEN     = ~a0_wen;
-    // BRAM1 : A high
+    // ---- BRAM1 : A high ----
     assign BRAM1_READ_ADDR  = {1'b0, a_raddr};
     assign BRAM1_REN        = ~a_ren;
     assign BRAM1_RCLKEN     = ~a_ren;
@@ -255,7 +270,7 @@
     assign BRAM1_DATA_IN    = a1_din;
     assign BRAM1_WEN        = ~a1_wen;
     assign BRAM1_WCLKEN     = ~a1_wen;
-    // BRAM2 : twiddle low
+    // ---- BRAM2 : twiddle low ----
     assign BRAM2_READ_ADDR  = {1'b0, t_raddr};
     assign BRAM2_REN        = ~t_ren;
     assign BRAM2_RCLKEN     = ~t_ren;
@@ -263,7 +278,7 @@
     assign BRAM2_DATA_IN    = rx_data;
     assign BRAM2_WEN        = ~(host_wr_z & ~hi);
     assign BRAM2_WCLKEN     = ~(host_wr_z & ~hi);
-    // BRAM3 : twiddle high
+    // ---- BRAM3 : twiddle high ----
     assign BRAM3_READ_ADDR  = {1'b0, t_raddr};
     assign BRAM3_REN        = ~t_ren;
     assign BRAM3_RCLKEN     = ~t_ren;
@@ -271,7 +286,7 @@
     assign BRAM3_DATA_IN    = rx_data;
     assign BRAM3_WEN        = ~(host_wr_z & hi);
     assign BRAM3_WCLKEN     = ~(host_wr_z & hi);
-    // BRAM4 : B low
+    // ---- BRAM4 : B low ----
     assign BRAM4_READ_ADDR  = {1'b0, b_raddr};
     assign BRAM4_REN        = ~b_ren;
     assign BRAM4_RCLKEN     = ~b_ren;
@@ -279,7 +294,7 @@
     assign BRAM4_DATA_IN    = rx_data;
     assign BRAM4_WEN        = ~(host_wr_b & ~hi);
     assign BRAM4_WCLKEN     = ~(host_wr_b & ~hi);
-    // BRAM5 : B high
+    // ---- BRAM5 : B high ----
     assign BRAM5_READ_ADDR  = {1'b0, b_raddr};
     assign BRAM5_REN        = ~b_ren;
     assign BRAM5_RCLKEN     = ~b_ren;

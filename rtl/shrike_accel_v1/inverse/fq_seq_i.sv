@@ -83,7 +83,7 @@ module fq_seq_i (
                     state <= BF_RB;
                 end
             end
-            // final scale by 128^-1 (Montgomery)
+            // ---- final scale by 128^-1 (Montgomery) ----
             SC_RD:  state <= SC_CA;
             SC_CA:  begin a_reg<=a_rdata[11:0]; state<=SC_MUL; end
             SC_MUL: state <= SC_WMU;
@@ -97,7 +97,7 @@ module fq_seq_i (
         end
     end
 
-    // alu: BF_MUL -> (b-a) feeds multiplier ; BF_WA -> a+b
+    // ALU: BF_MUL -> (b-a) feeds multiplier ; BF_WA -> a+b
     always @(*) begin
         alu_x = a_reg; alu_y = b_reg; alu_sub = 1'b0;
         case (state)

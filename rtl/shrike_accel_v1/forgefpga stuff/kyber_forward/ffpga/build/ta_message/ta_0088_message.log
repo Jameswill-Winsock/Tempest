@@ -1,8 +1,0 @@
-[CRITICAL WARNING: Line=1] Object \ hasn't found any match and is ignored.
-[CRITICAL WARNING: Line=1] No matching clock object is found in the netlist. The clock definition is ignored.
-[CRITICAL WARNING: Line=2] Unsupported constraint.
-[CRITICAL WARNING: Line=3] Unsupported constraint.
-[CRITICAL WARNING: Line=4] Unsupported constraint.
-Parsing ends with 0 notes, 0 warnings and 5 critical warnings.
-
-

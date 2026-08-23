@@ -1,36 +1,36 @@
 // controls fpga to uhhhh you know spi with ze rp2040 literally thats the job
 module spi_target #(
-  parameter CPOL   = 1'b0,  // when one clock low in idle otherwise clock high
-  parameter CPHA   = 1'b0,  // when one sampling occur at falling edge otherwise at rising edge of noninvert clock
-  parameter WIDTH  = 8,     // determine data width of spi to the input and output data bus
-  parameter LSB    = 1'b0   // when one data starts from lsb otherwise data start from msb 
+  parameter CPOL   = 1'b0,  // When one, clock is low in idle, otherwise clock is high
+  parameter CPHA   = 1'b0,  // When one, sampling occurs at falling edge, otherwise at rising edge of non-inverted clock
+  parameter WIDTH  = 8,     // Determines the data width of SPI to the input and output data buses
+  parameter LSB    = 1'b0   // When one, data starts from LSB, otherwise data starts from MSB 
 ) (
 // common ports
   input                  i_clk,           // input clock signal
   input                  i_rst_n,         // input negative reset signal
 // control signal
-  input                  i_enable,        // input enable spi target signal
-// spi interface ports
+  input                  i_enable,        // input enable SPI target signal
+// SPI interface ports
   input                  i_ss_n,          // input target select signal
   input                  i_sck,           // input spi clock signal
   input                  i_mosi,          // input controller output target input signal
   output                 o_miso,          // output controller input target output signal
   output                 o_miso_oe,       // output miso enable output signal
-//rx internal ports
+//RX internal ports
   output reg [WIDTH-1:0] o_rx_data,       // output data bus
   output reg             o_rx_data_valid, // output receive data valid signal
-//tx internal ports
+//TX internal ports
   input      [WIDTH-1:0] i_tx_data,       // input data bus
   output                 o_tx_data_hold   // output signal used to get tx data from i_tx_data input
 );
 
-// signal declaration
+// Signal declaration
   reg               [2:0] r_ss_n_sync, r_sck_sync;
   reg [$clog2(WIDTH-1):0] r_transmision_count;
   reg         [WIDTH-1:0] r_miso_data;
   wire                    w_sck_r_edge, w_sck_f_edge, w_sck_edge, w_sck_edge_op;
 
-// spi input signals synchronization
+// SPI input signals synchronization
   always @(posedge i_clk or negedge i_rst_n) begin
     if (!i_rst_n) begin
       r_ss_n_sync <= 'b111;
@@ -51,13 +51,13 @@ module spi_target #(
     end
   end
 
-// create rising and falling edge signal from spi_clk signal
+// Create rising and falling edge signals from spi_clk signal
   assign w_sck_r_edge  = ~r_sck_sync[2] & r_sck_sync[1];
   assign w_sck_f_edge  = r_sck_sync[2] & ~r_sck_sync[1];
   assign w_sck_edge    = (CPHA^CPOL) ? w_sck_f_edge : w_sck_r_edge;
   assign w_sck_edge_op = (CPHA^CPOL) ? w_sck_r_edge : w_sck_f_edge;
 
-// create transmission bit counter
+// Create transmission bit counter
   always @(posedge i_clk or negedge i_rst_n) begin
     if (!i_rst_n) begin
       r_transmision_count <= 'h0;
@@ -72,33 +72,41 @@ module spi_target #(
     end
   end
 
-// create o_rx_data bus and valid signals
-  always @(posedge i_clk or negedge i_rst_n) begin
-    if (!i_rst_n) begin
-      o_rx_data <= 'h0;
-    end else if (w_sck_edge) begin
-      if (LSB) begin
-        o_rx_data <= {i_mosi, o_rx_data[WIDTH-1:1]};
-      end else begin
-        o_rx_data <= {o_rx_data[WIDTH-2:0], i_mosi};
-      end
+reg [7:0] rx_shift;
+
+always @(posedge i_clk or negedge i_rst_n)
+begin
+    if(!i_rst_n)
+    begin
+        rx_shift <= 8'd0;
+        o_rx_data <= 8'd0;
+        o_rx_data_valid <= 1'b0;
     end
-  end
+    else
+    begin
+        o_rx_data_valid <= 1'b0;
 
-  always @(posedge i_clk or negedge i_rst_n) begin
-    if (!i_rst_n) begin
-      o_rx_data_valid <= 1'b0;
-    end else if (r_ss_n_sync[1] || (r_transmision_count == 0 && w_sck_edge)) begin
-      o_rx_data_valid <= 1'b0;
-    end else if (w_sck_edge && r_transmision_count == WIDTH-1) begin
-      o_rx_data_valid <= 1'b1;
+        if(w_sck_edge)
+        begin
+
+            rx_shift <= {rx_shift[6:0], i_mosi};
+
+            if(r_transmision_count == WIDTH-1)
+            begin
+                o_rx_data <= {rx_shift[6:0], i_mosi};
+                o_rx_data_valid <= 1'b1;
+            end
+
+        end
     end
-  end
+end
 
-// create o_tx_data_hold signal
-  assign o_tx_data_hold = (~CPHA & r_ss_n_sync[2] & ~r_ss_n_sync[1]) | (r_transmision_count == 0 & w_sck_edge_op);
 
-// create o_miso and oe signals
+// Create o_tx_data_hold signal
+  assign o_tx_data_hold =
+    (r_transmision_count == 0 & w_sck_edge_op);
+
+// Create o_miso and OE signals
   always @(posedge i_clk or negedge i_rst_n) begin
     if (!i_rst_n) begin
       r_miso_data <= 'h0;

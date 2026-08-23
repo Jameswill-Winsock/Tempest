@@ -27,7 +27,7 @@ module fq_seq_f (
     output reg        fq_go, output reg [11:0] fq_a, output reg [11:0] fq_b,
     input             fq_done, input [11:0] fq_res
 );
-    // alu: add/sub mod q, compare-reduce, no dedicated adder core
+    // ---- ALU: add/sub mod q, compare-reduce, no dedicated adder core ----
     reg  [11:0] alu_x, alu_y; reg alu_sub;
     wire [12:0] yop  = alu_sub ? (13'd3329 - {1'b0,alu_y}) : {1'b0,alu_y};
     wire [13:0] rsum = {2'b0,alu_x} + {1'b0,yop};
@@ -87,7 +87,7 @@ module fq_seq_f (
         end
     end
 
-    // alu operands: WA -> a+t ; WB -> a-t
+    // ALU operands: WA -> a+t ; WB -> a-t
     always @(*) begin
         alu_x = a_reg; alu_y = t_reg;
         alu_sub = (state == BF_WB);

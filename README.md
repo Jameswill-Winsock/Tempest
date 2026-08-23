@@ -1,4 +1,10 @@
 # Tempest : Open Hardware EM Side-Channel Analysis Platform
+
+## Important:
+if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
+Firmware is a BL507 based JTAG programmer, subject to change if I port the code to RP2040 instead.
+All pcb files and gerbers have been uploaded for the carrier board for the primer.
+
 latest readme for progress on the attack target available [here](rtl/shrike_accel_v1/readme.md).
 
 # Status

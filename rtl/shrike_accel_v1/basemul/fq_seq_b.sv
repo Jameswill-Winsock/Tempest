@@ -15,7 +15,6 @@
 // was taking up so much space on the freaking board that it would be wiser to just split off 
 // the three core processes and give them their own arithmetic core.
 
-
 module fq_seq_b (
     input             clk,
     input             rst,
@@ -31,7 +30,7 @@ module fq_seq_b (
 );
     localparam [11:0] Q = 12'd3329;
 
-    // addonly mod q reduce
+    // ADD-only mod-q reduce
     reg  [11:0] alu_x, alu_y;
     wire [12:0] rsum = {1'b0,alu_x} + {1'b0,alu_y};
     wire [11:0] alu_res = (rsum >= 13'd3329) ? (rsum[11:0] - 12'd3329) : rsum[11:0];

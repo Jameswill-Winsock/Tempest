@@ -20,16 +20,16 @@
 (* top *) module ntt_top (
     (* iopad_external_pin, clkbuf_inhibit *) input  clk,
     (* iopad_external_pin *)                 output clk_en,
-    (* iopad_external_pin *)                 input  rst_n,
 
-    // spi (rp2040 is controller)
+    // ---- SPI (RP2040 is controller) ----
     (* iopad_external_pin *) input  spi_ss_n,
     (* iopad_external_pin *) input  spi_sck,
     (* iopad_external_pin *) input  spi_mosi,
+    (* iopad_external_pin *) input  rst_n,
     (* iopad_external_pin *) output spi_miso,
     (* iopad_external_pin *) output spi_miso_en,
 
-    // BRAM0 : coeff/A low byte
+    // ---- BRAM0 : coeff/A low byte ----
     (* iopad_external_pin *) output [1:0] BRAM0_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM0_DATA_IN,
     (* iopad_external_pin *) output       BRAM0_WEN,
@@ -39,7 +39,7 @@
     (* iopad_external_pin *) output       BRAM0_REN,
     (* iopad_external_pin *) output       BRAM0_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM0_READ_ADDR,
-    // BRAM1 : coeff/A high byte
+    // ---- BRAM1 : coeff/A high byte ----
     (* iopad_external_pin *) output [1:0] BRAM1_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM1_DATA_IN,
     (* iopad_external_pin *) output       BRAM1_WEN,
@@ -49,7 +49,7 @@
     (* iopad_external_pin *) output       BRAM1_REN,
     (* iopad_external_pin *) output       BRAM1_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM1_READ_ADDR,
-    // BRAM2 : twiddle low byte
+    // ---- BRAM2 : twiddle low byte ----
     (* iopad_external_pin *) output [1:0] BRAM2_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM2_DATA_IN,
     (* iopad_external_pin *) output       BRAM2_WEN,
@@ -59,7 +59,7 @@
     (* iopad_external_pin *) output       BRAM2_REN,
     (* iopad_external_pin *) output       BRAM2_RCLKEN,
     (* iopad_external_pin *) output [8:0] BRAM2_READ_ADDR,
-    // BRAM3 : twiddle high byte
+    // ---- BRAM3 : twiddle high byte ----
     (* iopad_external_pin *) output [1:0] BRAM3_RATIO,
     (* iopad_external_pin *) output [7:0] BRAM3_DATA_IN,
     (* iopad_external_pin *) output       BRAM3_WEN,
@@ -71,6 +71,7 @@
     (* iopad_external_pin *) output [8:0] BRAM3_READ_ADDR
 );
 
+
     assign clk_en = 1'b1;
     wire rst = ~rst_n;
 
@@ -79,14 +80,17 @@
     assign BRAM2_RATIO = 2'b00;
     assign BRAM3_RATIO = 2'b00;
 
-    // combined 16 bit read data
+    // combined 16-bit read data
     wire [15:0] a_rdata  = {BRAM1_DATA_OUT, BRAM0_DATA_OUT};   // coeff / operand A
     wire [15:0] tw_rdata = {BRAM3_DATA_OUT, BRAM2_DATA_OUT};   // twiddle
 
-    //  spi target (canonical module, mode 0, msb, 8-bit)
+    // ------------------------------------------------------------------------
+    //  SPI target (canonical Shrike module, mode 0, MSB, 8-bit)
+    // ------------------------------------------------------------------------
     wire [7:0] rx_data;
     wire       rx_valid;
     reg  [7:0] tx_byte;
+    wire       tx_hold;
 
     spi_target #(.CPOL(0), .CPHA(0), .WIDTH(8), .LSB(0)) u_spi (
         .i_clk          (clk),
@@ -109,7 +113,8 @@
         if (!rst_n) rx_valid_d <= 1'b0;
         else        rx_valid_d <= rx_valid;
 
-    //  unified engine (or shared core): one fq_seq (fwd/inv/scale/basemul) + one fq_core.
+    // ------------------------------------------------------------------------
+    //  UNIFIED engine: one fq_seq (fwd/inv/scale/basemul) + one fq_core.
     //  Replaces ntt_master + ntt_butterfly + basemul_ctrl + mod_mult + mont_redc.
     // ------------------------------------------------------------------------
     reg        eng_start; reg [1:0] eng_op;
@@ -151,6 +156,10 @@
 
     wire [7:0] word_addr = bptr[9:1];
     wire       hi        = bptr[0];
+    // read-back prefetch: address the word one step ahead so registered BRAM
+    // data is valid when the vendor SPI target latches tx_byte.
+    wire [9:0] rd_ptr    = rdc ? (bptr + 10'd2) : bptr;  // +2 prefetch: host discards first 2 read words
+    wire [7:0] rd_waddr  = rd_ptr[9:1];
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -189,7 +198,9 @@
         end
     end
 
-    // MISO byte: coeff during read-back, else status
+    // MISO byte: combinational. The vendor SPI target latches i_tx_data into its
+    // shift register at o_tx_data_hold (start of each outgoing byte), so tx_byte
+    // just needs to be valid then. rd_byte follows the current read pointer.
     wire [7:0] rd_byte = hi ? BRAM1_DATA_OUT : BRAM0_DATA_OUT;
     always @(*) tx_byte = rdc ? rd_byte : {7'b0, dlatch};
 
@@ -202,7 +213,7 @@
 
     // ---- coeff / A (BRAM0/1) ----
     wire        a_ren   = eng_run ? e_aren : rdc;
-    wire [7:0]  a_raddr = eng_run ? e_araddr : word_addr;
+    wire [7:0]  a_raddr = eng_run ? e_araddr : (rdc ? rd_waddr : word_addr);
     wire        a0_wen  = eng_run ? e_awen : (host_wr_a & ~hi);
     wire        a1_wen  = eng_run ? e_awen : (host_wr_a &  hi);
     wire [7:0]  a_waddr = eng_run ? e_awaddr : word_addr;
@@ -217,8 +228,9 @@
     wire        b_ren   = eng_run ? e_bren   : 1'b0;
     wire [7:0]  b_raddr = eng_run ? e_braddr : 8'd0;
 
-    //  bram port wiring (enables inverted to active low at the pads)
-
+    // ========================================================================
+    //  BRAM port wiring (enables inverted to active-low at the pads)
+    // ========================================================================
     // ---- BRAM0 : A low ----
     assign BRAM0_READ_ADDR  = {1'b0, a_raddr};
     assign BRAM0_REN        = ~a_ren;

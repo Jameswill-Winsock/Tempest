@@ -48,5 +48,4 @@ module fqmul_unit (
     wire [27:0] s  = {4'd0, t} + mq;
     wire [12:0] u  = s[27:16];
     assign res = (u >= Q) ? (u - Q) : u[11:0];
-    
 endmodule

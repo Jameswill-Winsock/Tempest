@@ -1,4 +1,4 @@
 FinderPnRatio=50
 FinderPnIter=0
-PlaceDly=23266
+PlaceDly=8017
 PEAKMEM=1374MB
