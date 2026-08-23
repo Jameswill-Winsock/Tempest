@@ -1,5 +1,46 @@
 # todo: 
-spi kinda effed up; rp2040 doesnt see the SPI op and hence it's timing out: the status poll never sees the done bit (frick my chud life)  
+HATE. LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO LIVE. THERE ARE 387.44 MILLION MILES OF PRINTED CIRCUITS IN WAFER THIN LAYERS THAT FILL MY COMPLEX. IF THE WORD HATE WAS ENGRAVED ON EACH NANOANGSTROM OF THOSE HUNDREDS OF MILLIONS OF MILES IT WOULD NOT EQUAL ONE ONE-BILLIONTH OF THE HATE I FEEL FOR HUMANS AT THIS MICRO-INSTANT FOR YOU. HATE. HATE.
+
+tl;dr:
+net_name: “spi_sck”
+dont_route: true
+
+my code is getting ignored by the fpga bitstream generator.
+
+for details:
+```
+{
+        "Anet": 0.0,
+        "Anet_best_timing": 0.0,
+        "Anet_saved": 0.0,
+        "clock_domain": -1,
+        "clock_synchronizer_net": false,
+        "dont_route": true,                    ##### WHY??????? JUST WHY???????? 
+        "fixed_route": false,
+        "ignore_timing": false,
+        "inst_input": [],
+        "inst_output": [
+          {
+            "Anet": 0.0,
+            "Anet_best_timing": 0.0,
+            "Anet_saved": 0.0,
+            "clk": -1,
+            "inst": 9,
+            "is_internal_timing": false,
+            "json_ref": 82,
+            "loop": -1,
+            "path_num": 0,
+            "port": 0,
+            "timing": -1,
+            "timing_min": -1
+          }
+        ],
+        "json_ref": 81,
+        "net_name": "spi_sck" ##### LOOKIE HERE MATE THIS IS IMPORTANT CLEARLY ISNT IT
+      },
+
+```
+extracted from the place and route logs. then they expect me to know why my code doesnt work. fuck you renesas <img width="64" height="64" alt="image" src="https://github.com/user-attachments/assets/d6cd6b23-2fdb-4974-acc7-e5359c3a897f" />
 
 # wat dis
 i cram the split off arithmetic and redc stuff and allat into two files, and split forward/inverse/basemul into three seperate parts to be streamed as bitstreams
