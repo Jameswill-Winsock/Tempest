@@ -15,8 +15,9 @@ Early build. Built for Stardance @ Hack Club.
 ## Done:
 - Shrike-Lite ML-KEM accelerator is functionally complete (currently fighting Renesas place-and-route to get the final bitstream out).
 - Finished designing the Tang Primer 20K carrier board.
-<img width="1684" height="856" alt="image" src="https://github.com/user-attachments/assets/191265fc-8c2c-45bf-b6a4-d7e86c71f03e" />
-<img width="1192" height="842" alt="image" src="https://github.com/user-attachments/assets/0d7c0e82-450d-448b-9c26-a8b663571829" />
+<img width="1463" height="813" alt="image" src="https://github.com/user-attachments/assets/c52b16d7-a638-44e0-89c9-28c95248f62d" />
+<img width="1327" height="789" alt="image" src="https://github.com/user-attachments/assets/aedf5bbf-7166-4cd2-9735-d3a87f8f4efd" />
+
 
 
 ## In progress:
