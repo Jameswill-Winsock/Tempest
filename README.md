@@ -1,7 +1,7 @@
 # Tempest : Open Hardware EM Side-Channel Analysis Platform
 
 ## Important:
-if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
+if you are here looking for review, firmware, gerber and pcb have been updated. The main carrier board is ALL i have designed yet, and as I have specified before, I refuse to design the RF Probe until I can verify the design as prototype first and do some funky math for it. There is no step models or 3d models for this project.
 Firmware is a BL507 based JTAG programmer, subject to change if I port the code to RP2040 instead.
 All pcb files and gerbers have been uploaded for the carrier board for the primer.
 
