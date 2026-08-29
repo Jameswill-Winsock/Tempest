@@ -133,8 +133,9 @@ Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and d
 |Probe Calibration PCB | ~$15 | Self-designed | Repeatable EM reference source, source IEC 61967-6 Appendix A |
 |SPF5189Z RF Low Noise Amplifier | $15 | [REE52](https://rees52.com/products/spf5189z-rf-low-noise-amplifier-50-4000mhz-rf-lna-spf5189-0-6db-nf-phemt-mmic-rf-low-noise-amplifier-rs5090) | To boost passive probe signal |
 |SMA Connectors, RG178, Adapters, Attenuators |	$30–60 | [Pasternack](https://www.pasternack.com/), [Amphenol](https://www.amphenolrf.com/en-us/), [Mini-Circuits](https://www.minicircuits.com/) | RF interconnects |
-|Manual XY Positioning Stage | $30–40 | Custom design | Precise probe positioning |
+|Manual XY Positioning Stage | | Custom design | Precise probe positioning |
 |PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards|
+|CNC Shield + A4988 + Stepper Motor | ~$50| Undecided | To make the XY Stage |
 
 **Grand total**: approx 250$ (down from last times 400$ yipee)
 The oscilloscope, precision positioning stage, and laboratory power supply have been removed from the grant request. The initial revision of Tempest is designed to be developed using low-cost hardware and custom-designed PCBs, with higher-end laboratory equipment treated as optional future upgrades rather than project requirements.
