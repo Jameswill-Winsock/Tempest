@@ -21,7 +21,7 @@ Early build. Built for Stardance @ Hack Club.
 
 
 ## In progress:
-- Designing the rest of the Tempest hardware stack (probe, analog front-end, calibration hardware, etc.)
+- Designing the rest of the Tempest hardware stack (probe, calibration hardware, etc.)
 
 If you're here for a demo video, give me a little time. Renesas Go Configure is... an experience, and the place-and-route tool keeps blowing up violently in my face.
 
@@ -106,7 +106,6 @@ The goal is to design as much of the hardware myself as possible instead of buyi
 # Roadmap
 - Finish Shrike-Lite bring-up.
 - Build and validate a passive EM probe.
-- Design an active probe with integrated low-noise amplification.
 - Build a calibration board to characterize probe performance.
 - Validate the analog front-end on a deliberately leaky AES implementation before touching Kyber.
 - Build the trigger/synchronization pipeline.
@@ -118,10 +117,7 @@ The goal is to design as much of the hardware myself as possible instead of buyi
 Unlike the initial revision of this project, Tempest now focuses on designing the measurement hardware itself rather than simply integrating commercial equipment. Current hardware work includes:
 - Tang Primer 20K carrier board
 - Shielded PCB EM probe
-- Active probe with integrated low-noise amplifier
 - Probe calibration fixture
-- Analog filter board
-Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and debugging during development.
 
 # Bill of Materials
 
@@ -133,19 +129,17 @@ Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and d
 |Probe Calibration PCB | ~$15 | Self-designed | Repeatable EM reference source, source IEC 61967-6 Appendix A |
 |SPF5189Z RF Low Noise Amplifier | $15 | [REE52](https://rees52.com/products/spf5189z-rf-low-noise-amplifier-50-4000mhz-rf-lna-spf5189-0-6db-nf-phemt-mmic-rf-low-noise-amplifier-rs5090) | To boost passive probe signal |
 |SMA Connectors, RG178, Adapters, Attenuators |	$30–60 | [Pasternack](https://www.pasternack.com/), [Amphenol](https://www.amphenolrf.com/en-us/), [Mini-Circuits](https://www.minicircuits.com/) | RF interconnects |
-|Manual XY Positioning Stage | | Custom design | Precise probe positioning |
-|PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards|
-|CNC Shield + A4988 + Stepper Motor | ~$50| Undecided | To make the XY Stage |
+|PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards
 
-**Grand total**: approx 250$ (down from last times 400$ yipee)
+**Grand total**: approx 215$ (down from last times 400$ yipee)
 The oscilloscope, precision positioning stage, and laboratory power supply have been removed from the grant request. The initial revision of Tempest is designed to be developed using low-cost hardware and custom-designed PCBs, with higher-end laboratory equipment treated as optional future upgrades rather than project requirements.
 **BOM Revision 2**: The Tang Mega 138K, Thorlabs positioning equipment, and benchtop power supply have been removed due to cost. They have been replaced with lower-cost alternatives where necessary. A second, lower-cost FPGA is still required for <u>SDR, ADC, high-speed deterministic logic, trigger generation, timing/synchronization, buffering, and real-time control,</u> which cannot be reliably handled by the host computer or RTL-SDR alone.
-**BOM Revision 3**: More stuff removed, I have discovered that I can offload a lot more stuff to the FPGA like ADC and SDR onto it via a research paper and other stuff as well. Cost has been bought down. Final cost yet unconfirmed, may grow to 300$ max.
+**BOM Revision 3**: More stuff removed, I have discovered that I can offload a lot more stuff to the FPGA like ADC and SDR onto it via a research paper and other stuff as well. Cost has been bought down. Final cost is around approx 230$.
 
 # Repository Layout
 - rtl: Shrike-Lite accelerator, Future hardware targets
 
-- hardware: KiCad projects, Carrier boards, Probe boards, Analog front-end
+- hardware: KiCad projects, Carrier board, Probe board
 
 - analysis: Capture software, CPA/CEMA pipeline
 
