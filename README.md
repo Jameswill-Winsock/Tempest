@@ -3,7 +3,7 @@
 ## Important:
 if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
 Firmware is a fork of the SIPEED RV Debugger Plus, ported from the BL507 to the RP2040.
-All pcb files and gerbers have been uploaded for the carrier board for the primer. Rest of the scanning pcbs are in development. Gimme 2 weeks.
+All pcb files and gerbers have been uploaded for the carrier board for the primer. Rest of the scanning pcbs are in development. Gimme 2 weeks. (Yes I won't send it in for rereview until then)
 
 latest readme for progress on the attack target available [here](rtl/shrike_accel_v1/readme.md).
 
