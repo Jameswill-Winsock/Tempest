@@ -21,7 +21,7 @@ Early build. Built for Stardance @ Hack Club.
 
 
 ## In progress:
-- Designing the rest of the Tempest hardware stack (probe, analog front-end, calibration hardware, etc.)
+- Designing the rest of the Tempest hardware stack (probe, calibration hardware, etc.)
 
 If you're here for a demo video, give me a little time. Renesas Go Configure is... an experience, and the place-and-route tool keeps blowing up violently in my face.
 
@@ -101,15 +101,11 @@ The goal is to design as much of the hardware myself as possible instead of buyi
 |Shrike-Lite ML-KEM Accelerator | Complete (bitstream generation pending) |
 |Tang Primer 20K Carrier Board | Complete |
 |Shielded PCB EM Probe | In design |
-|Active Probe / LNA | In design |
-|Analog Filter Board | Planned |
-|Probe Calibration Board | Planned |
-|FPGA Capture Hardware | Future revision |
+|Probe Calibration Board | In design |
 
 # Roadmap
 - Finish Shrike-Lite bring-up.
 - Build and validate a passive EM probe.
-- Design an active probe with integrated low-noise amplification.
 - Build a calibration board to characterize probe performance.
 - Validate the analog front-end on a deliberately leaky AES implementation before touching Kyber.
 - Build the trigger/synchronization pipeline.
@@ -121,37 +117,29 @@ The goal is to design as much of the hardware myself as possible instead of buyi
 Unlike the initial revision of this project, Tempest now focuses on designing the measurement hardware itself rather than simply integrating commercial equipment. Current hardware work includes:
 - Tang Primer 20K carrier board
 - Shielded PCB EM probe
-- Active probe with integrated low-noise amplifier
 - Probe calibration fixture
-- Analog filter board
-Commercial equipment (oscilloscope, SDR, etc.) is only used for validation and debugging during development.
 
 # Bill of Materials
 
 | Item | Est. Price (USD) | Source | Why |
 |---|---|---|---|
-|Tang Nano 20k | $35–40 | [REES52](https://rees52.com/products/sipeed-tang-nano-20k-fpga-board-high-performance-dev-board-for-robotics-electronics) | Main FPGA for trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic |
+|Tang Nano 20k | $35–40 | [REES52](https://rees52.com/products/sipeed-tang-nano-20k-fpga-board-high-performance-dev-board-for-robotics-electronics) | Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic |
 |Tang Primer 20K Carrier PCB | ~$20 | Self-designed | Carrier for the Primer module (I already own the core board) |
-|Passive Probe PCB | ~$15 | Self-designed | Shielded PCB H-field probe|
-|Active Probe PCB | ~$25 | Self-designed | Integrated low-noise amplifier |
-|Probe Calibration PCB | ~$15 | Self-designed | Repeatable EM reference source |
-|RTL-SDR | $30–40 | [RTL-SDR Aliexpress](https://www.aliexpress.com/item/1005005952566458.html) | Initial low-cost capture experiments |
-|Components for Active Probe PCB | $20–40 | [Mini-Circuits](https://www.minicircuits.com/) | Prototype analog front-end |
+|Passive Probe PCB | ~$15 | Self-designed | Shielded PCB H-field probe, source IEC 61967-6 |
+|Probe Calibration PCB | ~$15 | Self-designed | Repeatable EM reference source, source IEC 61967-6 Appendix A |
+|SPF5189Z RF Low Noise Amplifier | $15 | [REE52](https://rees52.com/products/spf5189z-rf-low-noise-amplifier-50-4000mhz-rf-lna-spf5189-0-6db-nf-phemt-mmic-rf-low-noise-amplifier-rs5090) | To boost passive probe signal |
 |SMA Connectors, RG178, Adapters, Attenuators |	$30–60 | [Pasternack](https://www.pasternack.com/), [Amphenol](https://www.amphenolrf.com/en-us/), [Mini-Circuits](https://www.minicircuits.com/) | RF interconnects |
-|Magnet Wire, Ferrites | $10–20 | [Remington Industries](https://www.remingtonindustries.com), [Fair-rite](https://fair-rite.com)  | Probe construction |
-|Manual XY Positioning Stage | $30–40 | [Example at amazon](https://www.amazon.in/Mechanical-Moveable-Microscope-Caliper-Precision/dp/B07VPQT851) | Precise probe positioning |
-|PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards|
-|Miscellaneous passives, shielding, perfboard | $20–40 | Digikey/Mouser/As per need | Prototyping (I am not building any PCB until I have a known good circuit) |
-|FTDI Programmer or SiPEED programmer | ~25-50$ | [Mouser](https://www.mouser.in/en/ProductDetail/FTDI/FT2232H-MINI-MODULE?qs=pB3G9VbQXIf%252BpWyngo5ZjA%3D%3D&mgh=1) or a [SiPEED RV Debugger Plus](https://www.aliexpress.com/item/1005011815481146.html) | To program the FPGAs |
+|PCB fabrication & assembly | ~$50 | JLCPCB | Manufacturing the custom boards
 
-**Grand total**: anywhere from 325-450$ (can be rounded off to **$400 approx**)
+**Grand total**: approx 215$ (down from last times 400$ yipee)
 The oscilloscope, precision positioning stage, and laboratory power supply have been removed from the grant request. The initial revision of Tempest is designed to be developed using low-cost hardware and custom-designed PCBs, with higher-end laboratory equipment treated as optional future upgrades rather than project requirements.
-**BOM Revision 2**: The Tang Mega 138K, Thorlabs positioning equipment, and benchtop power supply have been removed due to cost. They have been replaced with lower-cost alternatives where necessary. A second, lower-cost FPGA is still required for <u>high-speed deterministic logic, trigger generation, timing/synchronization, buffering, and real-time control,</u> which cannot be reliably handled by the host computer or RTL-SDR alone.
+**BOM Revision 2**: The Tang Mega 138K, Thorlabs positioning equipment, and benchtop power supply have been removed due to cost. They have been replaced with lower-cost alternatives where necessary. A second, lower-cost FPGA is still required for <u>SDR, ADC, high-speed deterministic logic, trigger generation, timing/synchronization, buffering, and real-time control,</u> which cannot be reliably handled by the host computer or RTL-SDR alone.
+**BOM Revision 3**: More stuff removed, I have discovered that I can offload a lot more stuff to the FPGA like ADC and SDR onto it via a research paper and other stuff as well. Cost has been bought down. Final cost is around approx 230$.
 
 # Repository Layout
 - rtl: Shrike-Lite accelerator, Future hardware targets
 
-- hardware: KiCad projects, Carrier boards, Probe boards, Analog front-end
+- hardware: KiCad projects, Carrier board, Probe board
 
 - analysis: Capture software, CPA/CEMA pipeline
 
