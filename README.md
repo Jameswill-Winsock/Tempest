@@ -3,7 +3,7 @@
 ## Important:
 if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
 Firmware is a fork of the SIPEED RV Debugger Plus, ported from the BL507 to the RP2040.
-All pcb files and gerbers have been uploaded for the carrier board for the primer, as well as probe board and calibration strip.
+All pcb files and gerbers have been uploaded for the carrier board for the primer. All pcbs are done.
 
 latest readme for progress on the attack target available [here](rtl/shrike_accel_v1/readme.md).
 
@@ -18,10 +18,14 @@ Early build. Built for Stardance @ Hack Club.
 <img width="1463" height="813" alt="image" src="https://github.com/user-attachments/assets/c52b16d7-a638-44e0-89c9-28c95248f62d" />
 <img width="1327" height="789" alt="image" src="https://github.com/user-attachments/assets/aedf5bbf-7166-4cd2-9735-d3a87f8f4efd" />
 
+- Finished designing the H Field Probe
+<img width="1482" height="655" alt="image" src="https://github.com/user-attachments/assets/18b33b58-ce89-4412-ab90-8d20e9e68125" />
+
+
 
 
 ## In progress:
-Demo video. Give me a lot of time. renesas Go Configure is a royally painful experience, and the place-and-route tool keeps ignoring my nets for some reason, and somehow screws up a simple spi communication while running yosys anyways under the hood (how do you even fuck up that bad lmfao).
+Demo video. Give me a while. Renesas Go Configure is quite the software, and the place-and-route tool keeps blowing up violently in my face.
 
 # Description
 
@@ -96,8 +100,8 @@ Python Analysis Pipeline
 |---|---|
 |Shrike-Lite ML-KEM Accelerator | Complete (bitstream generation pending) |
 |Tang Primer 20K Carrier Board | Complete |
-|Shielded PCB EM Probe | Finished |
-|Probe Calibration Board | Finished |
+|Shielded PCB EM Probe | Complete |
+|Probe Calibration Board | Complete |
 
 # Roadmap
 - Finish Shrike-Lite bring-up.
