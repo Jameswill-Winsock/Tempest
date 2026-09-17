@@ -3,7 +3,7 @@
 ## Important:
 if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
 Firmware is a fork of the SIPEED RV Debugger Plus, ported from the BL507 to the RP2040.
-All pcb files and gerbers have been uploaded for the carrier board for the primer. Rest of the scanning pcbs are in development. Gimme 2 weeks. (Yes I won't send it in for rereview until then)
+All pcb files and gerbers have been uploaded for the carrier board for the primer, as well as probe board and calibration strip.
 
 latest readme for progress on the attack target available [here](rtl/shrike_accel_v1/readme.md).
 
@@ -21,9 +21,7 @@ Early build. Built for Stardance @ Hack Club.
 
 
 ## In progress:
-- Designing the rest of the Tempest hardware stack (probe, calibration hardware, etc.)
-
-If you're here for a demo video, give me a little time. Renesas Go Configure is... an experience, and the place-and-route tool keeps blowing up violently in my face.
+Demo video. Give me a lot of time. renesas Go Configure is a royally painful experience, and the place-and-route tool keeps ignoring my nets for some reason, and somehow screws up a simple spi communication while running yosys anyways under the hood (how do you even fuck up that bad lmfao).
 
 # Description
 
@@ -94,14 +92,12 @@ Python Analysis Pipeline
 ```
 # Hardware Designed For This Project
 
-The goal is to design as much of the hardware myself as possible instead of buying commercial equipment. 
-
 | Hardware | Status |
 |---|---|
 |Shrike-Lite ML-KEM Accelerator | Complete (bitstream generation pending) |
 |Tang Primer 20K Carrier Board | Complete |
-|Shielded PCB EM Probe | In design |
-|Probe Calibration Board | In design |
+|Shielded PCB EM Probe | Finished |
+|Probe Calibration Board | Finished |
 
 # Roadmap
 - Finish Shrike-Lite bring-up.
