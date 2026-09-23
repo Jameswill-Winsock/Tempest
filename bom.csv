@@ -1,8 +1,8 @@
-Item,Est. Price (USD),Source,Why
-Tang Nano 20k,$36,REES52,"Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic"
-Tang Primer 20K Carrier PCB,~$20,Self-designed,Carrier for the Primer module (I already own the core board)
-Passive Probe PCB,~$15,Self-designed,"Shielded PCB H-field probe, source IEC 61967-6"
-Probe Calibration PCB,~$15,Self-designed,"Repeatable EM reference source, source IEC 61967-6 Appendix A"
-SPF5189Z RF Low Noise Amplifier,$15,REE52,To boost passive probe signal
-"SMA Connectors, RG178, Adapters, Attenuators",$30–60,"Pasternack, Amphenol, Mini-Circuits",RF interconnects
-PCB fabrication & assembly,~$50,JLCPCB,Manufacturing the custom boards
+Item,Est. Price (USD),Source,Why,Quantity
+Tang Nano 20k,$36,REES52,"Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic",1
+Tang Primer 20K Carrier PCB,~$20,Self-designed,Carrier for the Primer module (I already own the core board),5
+Passive Probe PCB,~$15,Self-designed,"Shielded PCB H-field probe, source IEC 61967-6",5
+Probe Calibration PCB,~$15,Self-designed,"Repeatable EM reference source, source IEC 61967-6 Appendix A",5
+SPF5189Z RF Low Noise Amplifier,$15,REE52,To boost passive probe signal,1
+"SMA Connectors, RG178, Adapters, Attenuators",$30–60,"Pasternack, Amphenol, Mini-Circuits",RF interconnects,As per need
+PCB fabrication & assembly,~$50,JLCPCB,Manufacturing the custom boards,-
