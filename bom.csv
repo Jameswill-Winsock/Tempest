@@ -1,5 +1,5 @@
 Item,Est. Price (USD),Source,Why,Quantity
-Tang Nano 20k,$36,REES52,"Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic",1
+Tang Nano 20k,$40,REES52,"Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic",1
 Tang Primer 20K Carrier PCB,~$20,Self-designed,Carrier for the Primer module (I already own the core board),5
 Passive Probe PCB,~$15,Self-designed,"Shielded PCB H-field probe, source IEC 61967-6",5
 Probe Calibration PCB,~$15,Self-designed,"Repeatable EM reference source, source IEC 61967-6 Appendix A",5
