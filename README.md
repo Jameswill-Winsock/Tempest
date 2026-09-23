@@ -123,7 +123,7 @@ Unlike the initial revision of this project, Tempest now focuses on designing th
 
 | Item | Est. Price (USD) | Source | Why |
 |---|---|---|---|
-|Tang Nano 20k | $35–40 | [REES52](https://rees52.com/products/sipeed-tang-nano-20k-fpga-board-high-performance-dev-board-for-robotics-electronics) | Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic |
+|Tang Nano 20k | $36 | [REES52](https://rees52.com/products/sipeed-tang-nano-20k-fpga-board-high-performance-dev-board-for-robotics-electronics) | Main FPGA for ADC, SDR, trigger generation, timing/synchronization, counters, buffering/FIFOs, and control logic |
 |Tang Primer 20K Carrier PCB | ~$20 | Self-designed | Carrier for the Primer module (I already own the core board) |
 |Passive Probe PCB | ~$15 | Self-designed | Shielded PCB H-field probe, source IEC 61967-6 |
 |Probe Calibration PCB | ~$15 | Self-designed | Repeatable EM reference source, source IEC 61967-6 Appendix A |
