@@ -1,7 +1,7 @@
 # Tempest : Open Hardware EM Side-Channel Analysis Platform
 
 ## Important:
-if you are here looking for review, firmware, gerber and pcb have been updated. There is no step models or 3d models for this project.
+if you are here looking for review, firmware, gerber and pcb have been updated. Step models have been added.
 Firmware is a fork of the SIPEED RV Debugger Plus, ported from the BL507 to the RP2040.
 All pcb files and gerbers have been uploaded for the carrier board for the primer. All pcbs are done.
 
